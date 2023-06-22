@@ -16,13 +16,14 @@ class MailSender:
         msg["From"] = self.mail
         msg["To"] = receiver
 
-        msg["Subject"] = "EEE Notification"
+        msg["Subject"] = "Ανακοίνωση Τμήματος Ηλεκτρολόγων και Ηλεκτρονικών Μηχανικών"
 
         # Combine header, main text, and footer with HTML formatting
         email_content = message
 
         # Attach the email content as HTML
         msg.attach(MIMEText(email_content, "html"))
+        msg.attach(MIMEText(email_content.get_text(), "plain"))
 
         # Create a secure SSL/TLS connection to the SMTP server
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:

@@ -1,12 +1,16 @@
 import json
 
+from dotenv import dotenv_values
+
 from MailSender import MailSender
 from notifier import get_all_new_notices, send_notices
+
 
 def save_data():
 
     with open('data.json', 'w') as f:
         json.dump(data, f, indent=4)
+
 
 def get_data():
 
@@ -15,18 +19,23 @@ def get_data():
 
     return json_data
 
-# Email configuration
 
-sender_email = "vaggtester@gmail.com"  # Your Gmail address
-password = "fyqwmdipdshmlium"  # Your Gmail password
+# Email configuration
+env_vars = dotenv_values('.env')
+sender_email = env_vars['EMAIL']
+password = env_vars['PASSWORD']
 
 sender = MailSender(sender_email, password)
 
 data = get_data()
 
 url = "https://eee.uniwa.gr/el/anakinoseis/anakoinoseis-grammateias"
-test_title = "Ανακοίνωση παράτασης εξεταστικής περιόδου"
+last_title = data['last_title']
+notices = get_all_new_notices(url, last_title)
 
-notices = get_all_new_notices(url, test_title)
-data['last_title'] = send_notices(notices, data['subscribers'])
+if len(notices) > 0:
+    notices.reverse()
+    data['last_title'] = send_notices(sender, notices, data['subscribers'])
+
 save_data()
+print("Program finished successfully!")
