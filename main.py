@@ -19,6 +19,10 @@ def main():
 
     url = "https://eee.uniwa.gr/el/anakinoseis/anakoinoseis-grammateias"
 
+    notices = get_all_new_notices(url, "Ανακοίνωση παράτασης εξεταστικής περιόδου")
+
+    for notice in notices:
+        print(notice['title'])
     # last_notice = get_last_notice(url)
     #
     # mail_text = get_mail_text(last_notice['url'])
@@ -68,16 +72,33 @@ def get_all_new_notices(url, last_title):
     article = soup.find('article')
 
     a = article.find('a')
-
     title = a.get_text().strip()
-    href = eee + a['href']
 
-    notification = {
-        'title': title,
-        'url': href
-    }
+    notices = []
 
-    return notification
+    while True:
+
+        article = soup.find('article')
+
+        a = article.find('a')
+
+        title = a.get_text().strip()
+        href = eee + a['href']
+
+        print(title)
+        print(last_title)
+        print()
+
+        if title == last_title:
+            break
+
+        else:
+            notices.append({
+                'title': title,
+                'url': href
+            })
+
+    return notices
 
 
 eee = "https://eee.uniwa.gr"
