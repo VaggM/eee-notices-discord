@@ -1,105 +1,32 @@
-from bs4 import BeautifulSoup
-import requests
 import json
 
 from MailSender import MailSender
+from notifier import get_all_new_notices, send_notices
 
-
-def main():
-
-    # Email configuration
-
-    sender_email = "vaggtester@gmail.com"  # Your Gmail address
-    password = "fyqwmdipdshmlium"  # Your Gmail password
-
-    sender = MailSender(sender_email, password)
-
-    with open('data.json', 'r') as f:
-        data = json.load(f)
-
-    url = "https://eee.uniwa.gr/el/anakinoseis/anakoinoseis-grammateias"
-
-    notices = get_all_new_notices(url, "Ανακοίνωση παράτασης εξεταστικής περιόδου")
-
-    for notice in notices:
-        print(notice['title'])
-    # last_notice = get_last_notice(url)
-    #
-    # mail_text = get_mail_text(last_notice['url'])
-    #
-    # if last_notice['title'] != data['last_title']:
-    #
-    #     data['last_title'] = last_notice['title']
-    #     save_data(data)
-    #     notify_subscribers(sender, mail_text, data['subscribers'])
-
-
-def save_data(data):
+def save_data():
 
     with open('data.json', 'w') as f:
         json.dump(data, f, indent=4)
 
+def get_data():
 
-def notify_subscribers(sender, mail_text, subscribers):
+    with open('data.json', 'r') as f:
+        json_data = json.load(f)
 
-    for mail in subscribers:
-        sender.send(mail, mail_text)
-        print(f"Mail sent! ( {mail} )")
+    return json_data
 
+# Email configuration
 
-def get_mail_text(url):
+sender_email = "vaggtester@gmail.com"  # Your Gmail address
+password = "fyqwmdipdshmlium"  # Your Gmail password
 
-    data = requests.get(url)
-    text = data.text
-    soup = BeautifulSoup(text, features="html.parser")
-    article = soup.find('article')
+sender = MailSender(sender_email, password)
 
-    a_tags = article.find_all('a')
+data = get_data()
 
-    for tag in a_tags:
-        tag['href'] = eee + tag['href']
+url = "https://eee.uniwa.gr/el/anakinoseis/anakoinoseis-grammateias"
+test_title = "Ανακοίνωση παράτασης εξεταστικής περιόδου"
 
-    return article
-
-
-def get_all_new_notices(url, last_title):
-
-    data = requests.get(url)
-    text = data.text
-
-    soup = BeautifulSoup(text, features="html.parser")
-
-    article = soup.find('article')
-
-    a = article.find('a')
-    title = a.get_text().strip()
-
-    notices = []
-
-    while True:
-
-        article = soup.find('article')
-
-        a = article.find('a')
-
-        title = a.get_text().strip()
-        href = eee + a['href']
-
-        print(title)
-        print(last_title)
-        print()
-
-        if title == last_title:
-            break
-
-        else:
-            notices.append({
-                'title': title,
-                'url': href
-            })
-
-    return notices
-
-
-eee = "https://eee.uniwa.gr"
-main()
+notices = get_all_new_notices(url, test_title)
+data['last_title'] = send_notices(notices, data['subscribers'])
+save_data()
