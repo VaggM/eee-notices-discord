@@ -31,11 +31,14 @@ data = get_data()
 
 url = "https://eee.uniwa.gr/el/anakinoseis/anakoinoseis-grammateias"
 last_title = data['last_title']
+print(f"Checking for any new notices after: {last_title}")
 notices = get_all_new_notices(url, last_title)
 
 if len(notices) > 0:
     notices.reverse()
     data['last_title'] = send_notices(sender, notices, data['subscribers'])
+else:
+    print("None were found.")
 
 save_data()
 print("Program finished successfully!")
