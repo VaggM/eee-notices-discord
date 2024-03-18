@@ -1,11 +1,14 @@
 ## EEE-Notice-Discordbot
 
+Simple app to have a discord bot show new announcements 
+from the Department of Electrical and Electronics Engineering, UniWA.
+
 Run container
 ```bash
-docker run \\
--e CHANNEL_ID="desired_channel_id" \\
--e DISCORD_TOKEN="discord_bot_token" \\
---name notifier \\
+docker run \
+-e DISCORD_TOKEN="" \
+-e CHANNEL_ID="" \
+--name notifier \
 vaggm/eee-notices-discord:1.0
 ```
 
