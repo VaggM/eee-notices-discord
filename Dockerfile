@@ -7,6 +7,5 @@ COPY . .
 RUN pip install -r "requirements.txt"
 
 ENV DISCORD_TOKEN token
-ENV CHANNEL_ID id
 
 CMD ["python3", "disc.py"]

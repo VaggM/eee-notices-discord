@@ -10,7 +10,10 @@ from notifier import get_all_new_notices
 def main():
     load_dotenv()
     TOKEN = os.getenv('DISCORD_TOKEN')
-    CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
+
+    channels_file = "./data/channel_ids.txt"
+    with open(channels_file, 'r') as f:
+        channel_ids = f.readlines()
 
     # Define intents
     intents = discord.Intents.default()
@@ -22,11 +25,11 @@ def main():
     # Function to send the message
     async def send_message():
         # Replace 'CHANNEL_ID' with the ID of the channel you want to send the message to
-        channel = client.get_channel(CHANNEL_ID)
+        channels = [client.get_channel(int(CHANNEL_ID)) for CHANNEL_ID in channel_ids]
 
-        if channel:
+        if channels:
             # Replace 'YOUR_MESSAGE_HERE' with the message you want to send
-            await message_sending(channel)
+            await message_sending(channels)
 
         else:
             print("Channel not found.")
@@ -42,13 +45,13 @@ def main():
     client.run(TOKEN)
 
 
-async def message_sending(channel):
+async def message_sending(channels):
 
     announce_grammateia = "https://eee.uniwa.gr/el/anakinoseis/anakoinoseis-grammateias"
     announce_mathimaton = "https://eee.uniwa.gr/el/anakinoseis/anakoinoseis-mathimaton"
     announce_ekdiloseis = "https://eee.uniwa.gr/el/anakinoseis/ekdilwseis"
 
-    filename = "last_urls.json"
+    filename = "./data/last_urls.json"
     with open(filename,'r') as f:
         last_urls = json.load(f)
 
@@ -72,11 +75,17 @@ async def message_sending(channel):
     notices.extend(notices_mathimaton)
     notices.extend(notices_ekdiloseis)
 
-    await send_message(channel, notices_grammateia, "γραμματείας")
-    await asyncio.sleep(60)
-    await send_message(channel, notices_mathimaton, "μαθημάτων")
-    await asyncio.sleep(60)
-    await send_message(channel, notices_grammateia, "εκδηλώσεων")
+    print(channels)
+
+    for channel in channels:
+
+        print(f"Sending message to channel {channel}")
+
+        await send_message(channel, notices_grammateia, "γραμματείας")
+        # await asyncio.sleep(60)
+        await send_message(channel, notices_mathimaton, "μαθημάτων")
+        # await asyncio.sleep(60)
+        await send_message(channel, notices_ekdiloseis, "εκδηλώσεων")
 
 
 
@@ -86,7 +95,7 @@ async def send_message(channel, notices, nickname):
 
             notice_num = len(notices)
 
-            message = "@everyone"
+            message = "@everyone HHM - "
 
             if notice_num == 1:
                 message += " 1 νέα ανακοίνωση "
