@@ -110,7 +110,7 @@ def create_message(notices, nickname):
             message += f"{nickname}\n\n"
 
             for notice in notices:
-                message += f"> {notice['title']}\n{notice['url']}\n\n"
+                message += f"> {notice['title']}\n> {notice['url']}\n\n"
 
             message += "\n"
 
