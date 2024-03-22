@@ -81,33 +81,40 @@ async def message_sending(channels):
 
         print(f"Sending message to channel {channel}")
 
-        await send_message(channel, notices_grammateia, "γραμματείας")
-        # await asyncio.sleep(60)
-        await send_message(channel, notices_mathimaton, "μαθημάτων")
-        # await asyncio.sleep(60)
-        await send_message(channel, notices_ekdiloseis, "εκδηλώσεων")
+        message = "@everyone\n"
+
+        message += create_message(notices_grammateia, "γραμματείας")
+        message += create_message(notices_mathimaton, "μαθημάτων")
+        message += create_message(notices_ekdiloseis, "εκδηλώσεων")
+
+        if message != "@everyone\n":
+            await channel.send(message)
 
 
 
-async def send_message(channel, notices, nickname):
+def create_message(notices, nickname):
+
+    message = ""
 
     if notices:
 
             notice_num = len(notices)
 
-            message = "@everyone HHM - "
+            message = "## HHM - "
 
             if notice_num == 1:
                 message += " 1 νέα ανακοίνωση "
             else:
                 message += f" {notice_num} νέες ανακοινώσεις "
 
-            message += f"{nickname}\n\n>>> "
+            message += f"{nickname}\n\n"
 
             for notice in notices:
-                message += f"**{notice['title']}**\n{notice['url']}\n\n"
+                message += f"> {notice['title']}\n{notice['url']}\n\n"
 
-            await channel.send(message)
+            message += "\n"
+
+    return message
 
 
 if __name__ == "__main__":
