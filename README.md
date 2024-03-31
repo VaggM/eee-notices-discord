@@ -12,7 +12,6 @@ Run container 1st time
 ```bash
 docker run \
 -e DISCORD_TOKEN="" \
--v /desired/path:/usr/src/app \
 --name notifier \
 vaggm/eee-notices-discord:1.0.1
 ```
