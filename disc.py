@@ -2,7 +2,6 @@
 import os
 import json
 import discord
-import asyncio
 from dotenv import load_dotenv
 from notifier import get_all_new_notices
 
@@ -24,15 +23,12 @@ def main():
 
     # Function to send the message
     async def send_message():
-        # Replace 'CHANNEL_ID' with the ID of the channel you want to send the message to
         channels = [client.get_channel(int(CHANNEL_ID)) for CHANNEL_ID in channel_ids]
 
         if channels:
-            # Replace 'YOUR_MESSAGE_HERE' with the message you want to send
             await message_sending(channels)
-
         else:
-            print("Channel not found.")
+            print("No channels found.")
 
     # Event handler for when the bot is ready
     @client.event
@@ -81,14 +77,15 @@ async def message_sending(channels):
 
         print(f"Sending message to channel {channel}")
 
-        message = "@everyone\n"
+        msg = "@everyone\n"
 
-        message += create_message(notices_grammateia, "γραμματείας")
-        message += create_message(notices_mathimaton, "μαθημάτων")
-        message += create_message(notices_ekdiloseis, "εκδηλώσεων")
+        msg1 = create_message(notices_grammateia, "γραμματείας")
+        msg2 = create_message(notices_mathimaton, "μαθημάτων")
+        msg3 = create_message(notices_ekdiloseis, "εκδηλώσεων")
 
-        if message != "@everyone\n":
-            await channel.send(message)
+        if msg1 or msg2 or msg3:
+            msg += msg1 + msg2 + msg3
+            await channel.send(msg)
 
 
 
@@ -109,10 +106,10 @@ def create_message(notices, nickname):
 
             message += f"{nickname}\n\n"
 
-            for notice in notices:
+            for notice in notices[:-1]:
                 message += f"> {notice['title']}\n> {notice['url']}\n> \n"
-
-            message += "\n"
+            
+            message += f"> {notices[-1]['title']}\n> {notices[-1]['url']} \n" 
 
     return message
 

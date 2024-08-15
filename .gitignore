@@ -1,4 +1,5 @@
 env
 __pychache__
 .env
+data/
 .idea
